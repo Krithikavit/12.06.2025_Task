@@ -1,0 +1,214 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>List of Movies</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rock+Salt&display=swap');
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #1c1c1c;
+            color: white;
+        }
+
+        .container {
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-family: 'Rock Salt', cursive;
+            font-size: 2.8em;
+            text-transform: uppercase;
+            color: #2ab7ca;
+            text-shadow: 0 0 10px #2ab7ca, 0 0 20px #2ab7ca;
+            margin-bottom: 30px;
+        }
+
+        .button-group {
+            margin-bottom: 20px;
+        }
+
+            .button-group button {
+                margin: 5px;
+                padding: 10px 20px;
+                background: transparent;
+                border: 2px solid #2ab7ca;
+                color: #2ab7ca;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+
+                .button-group button:hover {
+                    background: #2ab7ca;
+                    color: black;
+                }
+
+        .search-box {
+            margin: 20px auto;
+            position: relative;
+            display: inline-block;
+        }
+
+            .search-box input {
+                width: 300px;
+                padding: 10px 45px 10px 40px;
+                border-radius: 25px;
+                border: none;
+                outline: none;
+                font-size: 16px;
+                background-color: #102131;
+                color: white;
+                box-shadow: 0 0 8px #2ab7ca;
+            }
+
+            .search-box .fa-search {
+                position: absolute;
+                left: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #0a4d82;
+                font-size: 16px;
+            }
+
+            .search-box .fa-microphone {
+                position: absolute;
+                right: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #6fd2ff;
+                font-size: 16px;
+            }
+
+        .movie-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .card {
+            background: #1b2e40;
+            border-radius: 12px;
+            width: 180px;
+            color: white;
+            text-align: center;
+            overflow: hidden;
+            box-shadow: 0 0 12px #2ab7ca;
+            transition: transform 0.3s;
+        }
+
+            .card img {
+                width: 100%;
+                height: 250px;
+                object-fit: cover;
+                border-bottom: 1px solid #2ab7ca;
+            }
+
+            .card:hover {
+                transform: scale(1.05);
+            }
+
+            .card h3 {
+                margin: 10px 0 5px;
+            }
+
+            .card p {
+                font-size: 0.9em;
+                margin: 0 0 10px;
+            }
+
+        .heart {
+            color: #2ab7ca;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .search-box input {
+                width: 90%;
+            }
+
+            .card {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MOVIE LIST</h1>
+
+        <div class="button-group">
+            <button onclick="filterCategory('marvel')">Marvel Movie</button>
+            <button onclick="filterCategory('funny')">Funny Movie</button>
+            <button onclick="filterCategory('animation')">Animation Movie</button>
+            <button onclick="filterCategory('web')">Web Series Movie</button>
+        </div>
+
+        <div class="search-box">
+            <i class="fa fa-search"></i>
+            <input type="text" id="searchInput" onkeyup="searchMovies()" placeholder="Search here...">
+            <i class="fa-solid fa-microphone"></i>
+        </div>
+
+        <div id="movieList" class="movie-list"></div>
+    </div>
+
+    <script>
+        const movies = [
+            { title: "Captain Marvel", type: "movie", category: "marvel", image: "https://m.media-amazon.com/images/I/71xBLRBYOiL._AC_UF894,1000_QL80_.jpg" },
+            { title: "Ms. Marvel", type: "series", category: "marvel", image: "https://m.media-amazon.com/images/I/71rNJQ2g-EL._AC_UF894,1000_QL80_.jpg" },
+            { title: "Agent Carter", type: "movie", category: "marvel", image: "https://m.media-amazon.com/images/I/81YrPtNRtyL._AC_UF1000,1000_QL80_.jpg" },
+
+            { title: "Breaking Bad", type: "series", category: "web", image: "https://m.media-amazon.com/images/I/71w9aH2Hh4L._AC_UF1000,1000_QL80_.jpg" },
+            { title: "Stranger Things", type: "series", category: "web", image: "https://upload.wikimedia.org/wikipedia/en/f/f7/Stranger_Things_season_4.jpg" },
+            { title: "The Mandalorian", type: "series", category: "web", image: "https://upload.wikimedia.org/wikipedia/en/c/c5/The_Mandalorian_season_2_poster.jpg" },
+            { title: "Loki", type: "series", category: "web", image: "https://upload.wikimedia.org/wikipedia/en/2/27/Loki_%28TV_series%29_poster.jpeg" },
+
+            { title: "The Good, the Bad and the Ugly", type: "movie", category: "funny", image: "https://m.media-amazon.com/images/I/71aFt4+OTOL._AC_UF1000,1000_QL80_.jpg" },
+            { title: "Bad Boys", type: "movie", category: "funny", image: "https://m.media-amazon.com/images/I/81L1H82sGPL._AC_UF894,1000_QL80_.jpg" },
+
+            { title: "Toy Story", type: "movie", category: "animation", image: "https://upload.wikimedia.org/wikipedia/en/1/13/Toy_Story.jpg" },
+            { title: "Finding Nemo", type: "movie", category: "animation", image: "https://upload.wikimedia.org/wikipedia/en/2/29/Finding_Nemo.jpg" },
+            { title: "Frozen", type: "movie", category: "animation", image: "https://upload.wikimedia.org/wikipedia/en/0/05/Frozen_%282013_film%29_poster.jpg" },
+            { title: "Zootopia", type: "movie", category: "animation", image: "https://upload.wikimedia.org/wikipedia/en/e/ea/Zootopia.jpg" }
+        ];
+
+        const movieList = document.getElementById("movieList");
+
+        function displayMovies(list) {
+            movieList.innerHTML = "";
+            list.forEach(movie => {
+                const card = document.createElement("div");
+                card.className = "card";
+                card.innerHTML = `
+              <img src="${movie.image}" alt="${movie.title}">
+              <h3>${movie.title}</h3>
+              <p>Type: ${movie.type}</p>
+              <div class="heart">♡</div>
+            `;
+                movieList.appendChild(card);
+            });
+        }
+
+        function searchMovies() {
+            const value = document.getElementById("searchInput").value.toLowerCase();
+            const filtered = movies.filter(m => m.title.toLowerCase().includes(value));
+            displayMovies(filtered);
+        }
+
+        function filterCategory(category) {
+            const filtered = movies.filter(m => m.category === category);
+            displayMovies(filtered);
+        }
+
+        window.onload = () => {
+            displayMovies(movies);
+        };
+    </script>
+</body>
+</html>
